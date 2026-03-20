@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
+  final String loadingText;
   final bool isLoading;
   final VoidCallback? onPressed;
 
@@ -12,6 +13,7 @@ class AppButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.loadingText = "Đang xác thực...",
   });
 
   @override
@@ -49,7 +51,7 @@ class AppButton extends StatelessWidget {
             ],
 
             Text(
-              isLoading ? "Đang xác thực..." : text,
+              isLoading ? loadingText : text,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

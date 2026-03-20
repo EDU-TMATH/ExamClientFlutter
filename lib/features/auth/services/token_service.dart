@@ -35,18 +35,18 @@ class TokenService {
 
       final normalized = base64Url.normalize(payload);
       final decoded = utf8.decode(base64Url.decode(normalized));
-      print("Decoded JWT payload: $decoded");
+      // print("Decoded JWT payload: $decoded");
 
       final Map<String, dynamic> json = jsonDecode(decoded);
-      print("Parsed JWT payload: $json");
+      // print("Parsed JWT payload: $json");
       // 👇 optional: validate field
       if (!json.containsKey('exp')) return null;
-      print("Successfully parsed JWT payload with exp: ${json['exp']}");
-      print("UserPayload.fromJson output: ${UserPayload.fromJson(json)}");
+      // print("Successfully parsed JWT payload with exp: ${json['exp']}");
+      // print("UserPayload.fromJson output: ${UserPayload.fromJson(json)}");
       return UserPayload.fromJson(json);
-    } catch (e, stack) {
-      print("JWT ERROR: $e");
-      print(stack);
+    } catch (e) {
+      // print("JWT ERROR: $e");
+      // print(stack);
       return null;
     }
   }
@@ -54,13 +54,13 @@ class TokenService {
   // ================= CHECK EXPIRED =================
   bool isExpired(String? token) {
     final payload = parseJwt(token);
-    print("Checking token expiration: payload=$payload");
+    // print("Checking token expiration: payload=$payload");
     if (payload == null) return true;
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final isExpired = payload.exp < now;
-    print(
-      "Token expiration check: now=$now, exp=${payload.exp}, isExpired=$isExpired",
-    );
+    // print(
+    //   "Token expiration check: now=$now, exp=${payload.exp}, isExpired=$isExpired",
+    // );
     return isExpired;
   }
 

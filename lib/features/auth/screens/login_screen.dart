@@ -1,53 +1,14 @@
-import 'package:exam_client_flutter/core/di.dart';
-import 'package:exam_client_flutter/widgets/app_button.dart';
-import 'package:exam_client_flutter/widgets/app_input.dart';
-import 'package:exam_client_flutter/widgets/app_toast.dart';
+import 'package:exam_client_flutter/features/auth/widgets/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/constants/app_color.dart';
-import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  bool isLoggingIn = false;
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  void submit() async {
-    if (isLoggingIn) return;
-    setState(() {
-      isLoggingIn = true;
-    });
-    if (_formKey.currentState!.validate()) {
-      try {
-        final tokenResponse = await authService.login(
-          usernameController.text,
-          passwordController.text,
-        );
-        print("Login successful: ${tokenResponse.accessToken}");
-        await tokenStorage.saveToken(tokenResponse.accessToken);
-        if (!mounted) return;
-        context.go('/contests');
-      } catch (e) {
-        // Handle login error
-        AppToast.show(context, e.toString());
-      } finally {
-        if (!mounted) return;
-        setState(() {
-          isLoggingIn = false;
-        });
-      }
-    }
-    setState(() {
-      isLoggingIn = false;
-    });
+  void _handleLogin(String username, String password) {
+    // Handle login logic here
+    print("Logging in with username: $username and password: $password");
   }
 
   @override
@@ -71,62 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
             border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "EXAM CLIENT",
-                      style: TextStyle(
-                        fontSize: Layout.text_sm,
-                        fontWeight: FontWeight.w500,
-                        color: sky.shade(600),
-                      ),
-                    ),
-                    const SizedBox(height: Layout.spacing * 2),
-                    Text(
-                      "Đăng nhập",
-                      style: TextStyle(
-                        fontSize: Layout.text_3xl,
-                        fontWeight: FontWeight.bold,
-                        color: slate.shade(900),
-                      ),
-                    ),
-                    const SizedBox(height: Layout.spacing * 1),
-                    Text(
-                      "Nhập tài khoản để bắt đầu làm bài thi.",
-                      style: TextStyle(
-                        fontSize: Layout.text_sm,
-                        color: slate.shade(500),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: Layout.spacing * 4),
-                // Username
-                AppInput(hint: "Tên đăng nhập", controller: usernameController),
-                const SizedBox(height: Layout.spacing * 4),
-
-                // Password
-                AppInput(
-                  hint: "Mật khẩu",
-                  controller: passwordController,
-                  isPassword: true,
-                ),
-                const SizedBox(height: Layout.spacing * 5),
-
-                // Button
-                AppButton(
-                  text: "Đăng nhập",
-                  onPressed: submit,
-                  isLoading: isLoggingIn,
-                ),
-              ],
-            ),
-          ),
+          child: LoginForm(),
         ),
       ),
     );

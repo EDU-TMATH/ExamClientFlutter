@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 String? authGuard(String path, String? token) {
   final isLoggedIn = token != null && !tokenService.isExpired(token);
-  print("Auth guard check: path=$path, isLoggedIn=$isLoggedIn");
+  // print("Auth guard check: path=$path, isLoggedIn=$isLoggedIn");
 
   if (!isLoggedIn && path != '/login') return '/login';
   if (isLoggedIn && path == '/login') return '/contests';
@@ -17,7 +17,7 @@ final router = GoRouter(
   initialLocation: '/login',
   redirect: (context, state) async {
     final token = await tokenStorage.getToken();
-    print("Checking auth for path: ${state.fullPath}, token: $token");
+    // print("Checking auth for path: ${state.fullPath}, token: $token");
     return authGuard(state.fullPath ?? '', token);
   },
   routes: [
