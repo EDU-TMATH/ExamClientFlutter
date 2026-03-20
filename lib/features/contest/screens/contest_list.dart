@@ -5,8 +5,8 @@ import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/di.dart';
 import 'package:exam_client_flutter/features/contest/models/contest.dart';
 import 'package:exam_client_flutter/features/contest/widgets/contest_card.dart';
-import 'package:exam_client_flutter/widgets/app_container.dart';
 import 'package:exam_client_flutter/widgets/app_navbar.dart';
+import 'package:exam_client_flutter/widgets/app_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,18 +62,23 @@ class _ContestListState extends State<ContestList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppNavbar(title: "Danh sách cuộc thi"),
-      body: AppContainer(
-        child: Padding(
-          padding: const EdgeInsets.all(Layout.spacing * 4),
-          child: Column(
-            children: [
-              _header(),
-              const SizedBox(height: Layout.spacing * 4),
-              Expanded(child: _buildBody()),
-            ],
+      // appBar: const AppNavbar(title: "Danh sách cuộc thi"),
+      body: Row(
+        children: [
+          const AppSidebar(activeIndex: 0),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(Layout.spacing * 4),
+              child: Column(
+                children: [
+                  _header(),
+                  const SizedBox(height: Layout.spacing * 4),
+                  Expanded(child: _buildBody()),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -94,7 +99,7 @@ class _ContestListState extends State<ContestList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Chọn cuộc thi",
+            "Danh sách cuộc thi",
             style: TextStyle(
               fontSize: Layout.text_2xl,
               fontWeight: FontWeight.bold,
