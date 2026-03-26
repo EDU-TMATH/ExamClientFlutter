@@ -20,4 +20,30 @@ class ContestService {
       }
     }
   }
+
+  Future<ContestResponse> fetchCurrentContest() async {
+    try {
+      final res = await dio.get('/api/contests/current/');
+      return ContestResponse.fromJson(res.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['detail'] ?? "Lỗi khi tải cuộc thi hiện tại";
+      } else {
+        throw "Không kết nối được server";
+      }
+    }
+  }
+
+  Future<ContestDetailResponse> fetchContestDetail(String key) async {
+    try {
+      final res = await dio.get('/api/contest/$key/');
+      return ContestDetailResponse.fromJson(res.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['detail'] ?? "Lỗi khi tải chi tiết cuộc thi";
+      } else {
+        throw "Không kết nối được server";
+      }
+    }
+  }
 }

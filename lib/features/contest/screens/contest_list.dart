@@ -5,7 +5,6 @@ import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/di.dart';
 import 'package:exam_client_flutter/features/contest/models/contest.dart';
 import 'package:exam_client_flutter/features/contest/widgets/contest_card.dart';
-import 'package:exam_client_flutter/widgets/app_navbar.dart';
 import 'package:exam_client_flutter/widgets/app_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

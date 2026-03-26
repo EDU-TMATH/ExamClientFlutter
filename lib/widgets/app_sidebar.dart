@@ -84,7 +84,7 @@ class _AppSidebarState extends State<AppSidebar> {
       child: Column(
         children: [
           _buildToggleButton(),
-
+          const Divider(color: Colors.white24),
           // Top menu
           Expanded(
             child: ListView.separated(
@@ -109,7 +109,7 @@ class _AppSidebarState extends State<AppSidebar> {
       children: [
         SizedBox(
           width: collapsedWidth,
-          height: 70,
+          height: collapsedWidth,
           child: AnimatedRotation(
             turns: isExpanded ? 0.5 : 0.0,
             duration: const Duration(milliseconds: 200),
@@ -128,15 +128,31 @@ class _AppSidebarState extends State<AppSidebar> {
         ),
         if (isExpanded)
           Flexible(
-            child: Text(
-              "EXAM CLIENT",
-              style: TextStyle(
-                color: sky.shade(600),
-                fontSize: Layout.text_xl,
-                fontWeight: FontWeight.bold,
-              ),
-              overflow: TextOverflow.clip,
-              softWrap: false,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "EXAM CLIENT",
+                  style: TextStyle(
+                    color: sky.shade(600),
+                    fontSize: Layout.text_xl,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.clip,
+                  softWrap: false,
+                ),
+                Text(
+                  "v1.0.0",
+                  style: TextStyle(
+                    color: slate.shade(400),
+                    fontSize: Layout.text_xs,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.clip,
+                  softWrap: false,
+                ),
+              ],
             ),
           ),
       ],
@@ -155,14 +171,11 @@ class _AppSidebarState extends State<AppSidebar> {
         height: 40,
         child: Row(
           children: [
-            // 1. Icon luôn được căn giữa tuyệt đối so với chiều ngang của Sidebar (70px)
             SizedBox(
-              width:
-                  collapsedWidth, // Chiều rộng bằng đúng sidebar khi collapse
+              width: collapsedWidth,
               child: Center(child: Icon(icon, color: color)),
             ),
 
-            // 2. Phần Text và khoảng trắng sẽ "mọc" ra từ phía sau Icon
             if (isExpanded)
               Flexible(
                 child: Text(

@@ -6,11 +6,6 @@ import 'package:exam_client_flutter/constants/app_color.dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  void _handleLogin(String username, String password) {
-    // Handle login logic here
-    print("Logging in with username: $username and password: $password");
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

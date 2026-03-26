@@ -29,11 +29,11 @@ class ContestListItem {
   }
 }
 
-class ContestDetail extends ContestListItem {
+class ContestDetailResponse extends ContestListItem {
   final String description;
   final int userCount;
 
-  ContestDetail({
+  ContestDetailResponse({
     required super.pk,
     required super.key,
     required super.name,
@@ -44,8 +44,8 @@ class ContestDetail extends ContestListItem {
     required this.userCount,
   });
 
-  factory ContestDetail.fromJson(Map<String, dynamic> json) {
-    return ContestDetail(
+  factory ContestDetailResponse.fromJson(Map<String, dynamic> json) {
+    return ContestDetailResponse(
       pk: json['pk'],
       key: json['key'],
       name: json['name'],
@@ -55,5 +55,17 @@ class ContestDetail extends ContestListItem {
       description: json['description'],
       userCount: json['user_count'],
     );
+  }
+}
+
+class ContestResponse {
+  final int? pk;
+
+  ContestResponse({this.pk});
+
+  bool get hasContest => pk != null;
+
+  factory ContestResponse.fromJson(Map<String, dynamic> json) {
+    return ContestResponse(pk: json['pk'] as int?);
   }
 }
