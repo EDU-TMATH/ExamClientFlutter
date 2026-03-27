@@ -1,73 +1,70 @@
-import 'dart:convert';
-
-import 'package:exam_client_flutter/features/auth/models/user.dart';
+import 'package:exam_client_flutter/features/auth/data/api/auth_api.dart';
+import 'package:exam_client_flutter/features/auth/data/storage/token_storage.dart';
+import 'package:exam_client_flutter/features/auth/models/token.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class TokenService {
-  // static const _key = 'access_token';
+  final TokenStorage storage;
+  final AuthApi authApi;
+  String? _cachedAccess;
 
-  // // ================= SAVE =================
-  // Future<void> saveToken(String token) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString(_key, token);
-  // }
+  TokenService({required this.authApi, required this.storage});
 
-  // // ================= GET =================
-  // Future<String?> getToken() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getString(_key);
-  // }
+  Future<String?> getValidAccessToken() async {
+    if (_cachedAccess != null) return _cachedAccess;
+    final token = await storage.get();
+    if (token == null) return null;
 
-  // // ================= CLEAR =================
-  // Future<void> clearToken() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.remove(_key);
-  // }
-
-  // ================= DECODE =================
-  UserPayload? parseJwt(String? token) {
-    if (token == null || token.isEmpty) return null;
-
-    try {
-      final parts = token.split('.');
-      if (parts.length != 3) return null;
-
-      final payload = parts[1];
-
-      final normalized = base64Url.normalize(payload);
-      final decoded = utf8.decode(base64Url.decode(normalized));
-      // print("Decoded JWT payload: $decoded");
-
-      final Map<String, dynamic> json = jsonDecode(decoded);
-      // print("Parsed JWT payload: $json");
-      // 👇 optional: validate field
-      if (!json.containsKey('exp')) return null;
-      // print("Successfully parsed JWT payload with exp: ${json['exp']}");
-      // print("UserPayload.fromJson output: ${UserPayload.fromJson(json)}");
-      return UserPayload.fromJson(json);
-    } catch (e) {
-      // print("JWT ERROR: $e");
-      // print(stack);
-      return null;
+    if (isExpired(token.access)) {
+      final newToken = await authApi.refresh(token.refresh);
+      await storage.save(newToken);
+      _cachedAccess = newToken.access;
+      return newToken.access;
     }
+
+    _cachedAccess = token.access;
+    return token.access;
   }
 
-  // ================= CHECK EXPIRED =================
-  bool isExpired(String? token) {
-    final payload = parseJwt(token);
-    // print("Checking token expiration: payload=$payload");
-    if (payload == null) return true;
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final isExpired = payload.exp < now;
-    // print(
-    //   "Token expiration check: now=$now, exp=${payload.exp}, isExpired=$isExpired",
-    // );
-    return isExpired;
+  Future<String?> refresh() async {
+    final token = await storage.get();
+    if (token == null) return null;
+
+    final newToken = await authApi.refresh(token.refresh);
+    await storage.save(newToken);
+    _cachedAccess = newToken.access;
+    return newToken.access;
+  }
+
+  Future<Token?> getToken() async {
+    return await storage.get();
+  }
+
+  Future<void> save(Token token) async {
+    await storage.save(token);
+    _cachedAccess = token.access;
+  }
+
+  Future<void> clear() async {
+    await storage.clear();
+    _cachedAccess = null;
+  }
+
+  bool isExpired(String token) {
+    return Jwt.isExpired(token);
+  }
+
+  DateTime getExpiry(String token) {
+    return Jwt.getExpiryDate(token)!;
+  }
+
+  Map<String, dynamic> decode(String token) {
+    return Jwt.parseJwt(token);
   }
 
   // ================= GET USERNAME =================
-  String? getUsername(String? token) {
-    final payload = parseJwt(token);
-    if (payload == null) return null;
-    return payload.username;
+  String getUsername(String token) {
+    final payload = decode(token);
+    return payload['username'];
   }
 }

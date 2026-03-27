@@ -1,19 +1,10 @@
-class TokenResponse {
-  final String accessToken;
-  final String tokenType;
-  final int expiresIn;
+class Token {
+  final String access;
+  final String refresh;
 
-  TokenResponse({
-    required this.accessToken,
-    required this.tokenType,
-    required this.expiresIn,
-  });
+  Token({required this.access, required this.refresh});
 
-  factory TokenResponse.fromJson(Map<String, dynamic> json) {
-    return TokenResponse(
-      accessToken: json['access_token'],
-      tokenType: json['token_type'],
-      expiresIn: json['expires_in'],
-    );
+  factory Token.fromJson(Map<String, dynamic> json) {
+    return Token(access: json['access_token'], refresh: json['refresh_token']);
   }
 }

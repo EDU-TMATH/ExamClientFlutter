@@ -13,7 +13,7 @@ class AuthService {
 
       final res = await dio.post('/api/auth/login/', data: request.toJson());
 
-      return TokenResponse.fromJson(res.data);
+      return Token.fromJson(res.data);
     } on DioException catch (e) {
       if (e.response != null) {
         final msg = e.response?.data['detail'];
@@ -23,6 +23,20 @@ class AuthService {
         }
 
         throw msg ?? "Đăng nhập thất bại";
+      } else {
+        throw "Không kết nối được server";
+      }
+    }
+  }
+
+  Future getMe() async {
+    try {
+      final res = await dio.get('/api/auth/me/');
+      return res.data;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final msg = e.response?.data['detail'];
+        throw msg ?? "Lấy thông tin người dùng thất bại";
       } else {
         throw "Không kết nối được server";
       }

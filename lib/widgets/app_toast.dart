@@ -81,4 +81,16 @@ class AppToast {
       controller.dispose();
     });
   }
+
+  static void info(BuildContext context, String message) {
+    show(context, message, backgroundColor: Colors.blue);
+  }
+
+  static void success(BuildContext context, String message) {
+    show(context, message, backgroundColor: Colors.green);
+  }
+
+  static void error(BuildContext context, String message) {
+    show(context, message, backgroundColor: Colors.red);
+  }
 }

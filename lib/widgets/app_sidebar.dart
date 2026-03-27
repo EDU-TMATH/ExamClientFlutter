@@ -1,7 +1,8 @@
 import 'package:exam_client_flutter/constants/app_color.dart';
 import 'package:exam_client_flutter/constants/layout.dart';
-import 'package:exam_client_flutter/core/di.dart';
+import 'package:exam_client_flutter/core/providers/app_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class SidebarItem {
@@ -34,7 +35,7 @@ class SidebarItem {
   ];
 }
 
-class AppSidebar extends StatefulWidget {
+class AppSidebar extends ConsumerStatefulWidget {
   final List<SidebarItem> items;
   final int activeIndex;
 
@@ -45,10 +46,10 @@ class AppSidebar extends StatefulWidget {
   });
 
   @override
-  State<AppSidebar> createState() => _AppSidebarState();
+  ConsumerState<AppSidebar> createState() => _AppSidebarState();
 }
 
-class _AppSidebarState extends State<AppSidebar> {
+class _AppSidebarState extends ConsumerState<AppSidebar> {
   bool isExpanded = true;
   String username = "";
   double expandedWidth = 240;
@@ -62,15 +63,17 @@ class _AppSidebarState extends State<AppSidebar> {
   }
 
   Future<void> _loadUser() async {
-    final token = await tokenStorage.getToken();
-    final username = tokenService.getUsername(token);
+    final tokenService = ref.read(tokenServiceProvider);
+    final token = await tokenService.getValidAccessToken();
+    final username = tokenService.getUsername(token!);
     setState(() {
-      this.username = username ?? "User";
+      this.username = username;
     });
   }
 
   Future<void> _handleLogout() async {
-    await tokenStorage.clearToken();
+    final authRepository = ref.read(authRepositoryProvider);
+    await authRepository.logout();
     if (!mounted) return;
     context.go('/login');
   }

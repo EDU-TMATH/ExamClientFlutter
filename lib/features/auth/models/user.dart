@@ -1,22 +1,10 @@
-class UserPayload {
-  final String sub;
+class User {
+  final int pk;
   final String username;
-  final int exp;
-  final int iat;
 
-  UserPayload({
-    required this.sub,
-    required this.username,
-    required this.exp,
-    required this.iat,
-  });
+  User({required this.pk, required this.username});
 
-  factory UserPayload.fromJson(Map<String, dynamic> json) {
-    return UserPayload(
-      sub: json['sub'],
-      username: json['username'],
-      exp: json['exp'],
-      iat: json['iat'],
-    );
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(pk: json['pk'], username: json['username']);
   }
 }
