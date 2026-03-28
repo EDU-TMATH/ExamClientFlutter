@@ -1,5 +1,5 @@
 import 'package:exam_client_flutter/constants/layout.dart';
-import 'package:exam_client_flutter/widgets/app_sidebar.dart';
+import 'package:exam_client_flutter/widgets/app_layout.dart';
 import 'package:flutter/material.dart';
 
 class ContestDetail extends StatefulWidget {
@@ -18,42 +18,17 @@ class _ContestDetailState extends State<ContestDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          const AppSidebar(activeIndex: 0),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(Layout.spacing * 4),
-              child: Column(
-                children: [
-                  _header(),
-                  const SizedBox(height: Layout.spacing * 4),
-                  Expanded(child: _buildBody()),
-                ],
-              ),
-            ),
-          ),
-        ],
+    return AppLayout(
+      title: "Chi tiết cuộc thi",
+      subtitle: "Xem thông tin tổng quan và thao tác quản trị cuộc thi.",
+      activeRoute: "/contests",
+      headerAction: ElevatedButton(
+        onPressed: () {
+          // TODO: Implement edit contest functionality
+        },
+        child: const Text("Chỉnh sửa"),
       ),
-    );
-  }
-
-  Widget _header() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Chi tiết cuộc thi",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            // TODO: Implement edit contest functionality
-          },
-          child: const Text("Chỉnh sửa"),
-        ),
-      ],
+      body: _buildBody(),
     );
   }
 

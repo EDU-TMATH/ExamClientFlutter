@@ -3,6 +3,12 @@ Content-Type: application/json
 X-Exam-App: exam-client
 
 {
-  "username": "admin",
-  "password": "askdjaksdj"
+  "username": "patpro26",
+  "password": "tmath123@"
 }
+
+###
+
+GET http://171.244.63.31:8443/api/contests/current/ HTTP/1.1
+X-Exam-App: exam-client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNTMyIiwidXNlcm5hbWUiOiJwYXRwcm8yNiIsImlzX3N0YWZmIjpmYWxzZSwiaWF0IjoxNzc0MjM0NTY1LCJleHAiOjE3NzQyMzYzNjV9.BttVJqR0x9ZCJY58KrWGPDjb_nogwJ9VnP5XjL0Ik5g

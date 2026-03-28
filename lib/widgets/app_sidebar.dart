@@ -37,11 +37,11 @@ class SidebarItem {
 
 class AppSidebar extends ConsumerStatefulWidget {
   final List<SidebarItem> items;
-  final int activeIndex;
+  final String activeRoute;
 
   const AppSidebar({
     super.key,
-    required this.activeIndex,
+    required this.activeRoute,
     this.items = SidebarItem.items,
   });
 
@@ -195,8 +195,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
   }
 
   Widget _buildItem(SidebarItem item) {
-    final index = widget.items.indexOf(item);
-    final isActive = index == widget.activeIndex;
+    final isActive =
+        widget.activeRoute == item.route ||
+        widget.activeRoute.startsWith('${item.route}/');
 
     return _actionButton(
       item.icon,

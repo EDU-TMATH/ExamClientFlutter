@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:exam_client_flutter/constants/app_color.dart';
-import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/di.dart';
 import 'package:exam_client_flutter/features/contest/models/contest.dart';
 import 'package:exam_client_flutter/features/contest/widgets/contest_card.dart';
-import 'package:exam_client_flutter/widgets/app_sidebar.dart';
+import 'package:exam_client_flutter/widgets/app_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,57 +59,11 @@ class _ContestListState extends State<ContestList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: const AppNavbar(title: "Danh sách cuộc thi"),
-      body: Row(
-        children: [
-          const AppSidebar(activeIndex: 0),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(Layout.spacing * 4),
-              child: Column(
-                children: [
-                  _header(),
-                  const SizedBox(height: Layout.spacing * 4),
-                  Expanded(child: _buildBody()),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _header() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(Layout.spacing * 5),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(Layout.border_radius_2xl),
-        border: Border.all(color: Colors.white70),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Danh sách cuộc thi",
-            style: TextStyle(
-              fontSize: Layout.text_2xl,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: Layout.spacing * 1.5),
-          Text(
-            "Theo dõi thời gian bắt đầu và vào thi ngay khi sẵn sàng.",
-            style: TextStyle(color: slate.shade(600), fontSize: Layout.text_sm),
-          ),
-        ],
-      ),
+    return AppLayout(
+      title: "Danh sách cuộc thi",
+      subtitle: "Theo dõi thời gian bắt đầu và vào thi ngay khi sẵn sàng.",
+      activeRoute: "/contests",
+      body: _buildBody(),
     );
   }
 
