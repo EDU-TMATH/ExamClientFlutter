@@ -43,17 +43,17 @@ class _AppInputState extends State<AppInput> {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(Layout.border_radius_xl),
+              Radius.circular(Layout.borderRadiusXl),
             ),
             borderSide: BorderSide(color: gray.shade(300)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Layout.border_radius_xl),
+            borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
             borderSide: BorderSide(color: gray.shade(300)),
           ),
 
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Layout.border_radius_xl),
+            borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
             borderSide: BorderSide(color: sky.shade(500), width: 1.5),
           ),
         ),

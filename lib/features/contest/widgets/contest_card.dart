@@ -85,75 +85,71 @@ class _ContestCardState extends State<ContestCard> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: Container(
+      child: Card(
         margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
+        elevation: 1,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-            ),
-          ],
+          side: BorderSide(color: Colors.grey.shade200),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // LEFT
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.contest.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-
-                  _buildStatus(),
-
-                  if (widget.isActiveContest) ...[
-                    const SizedBox(height: 8),
-                    _badge(
-                      text: "Cuộc thi đang tham gia",
-                      color: Colors.blue.shade50,
-                      textColor: Colors.blue,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 12),
-
-            // RIGHT
-            if (widget.showAction)
-              label == "start"
-                  ? _lockedButton()
-                  : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // LEFT
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.contest.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      onPressed: () {
-                        widget.onJoin?.call(widget.contest.key);
-                      },
-                      child: Text(widget.actionLabel),
                     ),
-          ],
+                    const SizedBox(height: 6),
+
+                    _buildStatus(),
+
+                    if (widget.isActiveContest) ...[
+                      const SizedBox(height: 8),
+                      _badge(
+                        text: "Cuộc thi đang tham gia",
+                        color: Colors.blue.shade50,
+                        textColor: Colors.blue,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // RIGHT
+              if (widget.showAction)
+                label == "start"
+                    ? _lockedButton()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          widget.onJoin?.call(widget.contest.key);
+                        },
+                        child: Text(widget.actionLabel),
+                      ),
+            ],
+          ),
         ),
       ),
     );

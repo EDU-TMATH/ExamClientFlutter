@@ -1,4 +1,3 @@
-import 'package:exam_client_flutter/constants/app_color.dart';
 import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/providers/app_providers.dart';
 import 'package:flutter/material.dart';
@@ -17,20 +16,12 @@ class SidebarItem {
   });
 
   static const List<SidebarItem> items = [
-    SidebarItem(
-      title: "Bài tập",
-      icon: Icons.library_books,
-      route: "/problems",
-    ),
+    SidebarItem(title: "Trang chủ", icon: Icons.home, route: "/"),
+    SidebarItem(title: "Bài tập", icon: Icons.code, route: "/problems"),
     SidebarItem(
       title: "Cuộc thi",
       icon: Icons.emoji_events,
       route: "/contests",
-    ),
-    SidebarItem(
-      title: "Bảng xếp hạng",
-      icon: Icons.leaderboard,
-      route: "/users",
     ),
   ];
 }
@@ -50,11 +41,12 @@ class AppSidebar extends ConsumerStatefulWidget {
 }
 
 class _AppSidebarState extends ConsumerState<AppSidebar> {
-  bool isExpanded = true;
+  bool isExpanded = false;
   String username = "";
-  double expandedWidth = 240;
-  double collapsedWidth = Layout.rem * 4.5;
+  double expandedWidth = 220;
+  double collapsedWidth = Layout.rem * 4.25;
   double get sidebarWidth => isExpanded ? expandedWidth : collapsedWidth;
+  double get collapsedContentWidth => collapsedWidth - (Layout.spacing * 2) - 2;
 
   @override
   void initState() {
@@ -65,7 +57,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
   Future<void> _loadUser() async {
     final tokenService = ref.read(tokenServiceProvider);
     final token = await tokenService.getValidAccessToken();
-    final username = tokenService.getUsername(token!);
+    if (!mounted || token == null) return;
+    final username = tokenService.getUsername(token);
     setState(() {
       this.username = username;
     });
@@ -80,82 +73,94 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 220),
       width: sidebarWidth,
-      color: Colors.grey.shade900,
+      margin: const EdgeInsets.all(Layout.spacing * 2),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
       child: Column(
         children: [
-          _buildToggleButton(),
-          const Divider(color: Colors.white24),
-          // Top menu
+          Padding(
+            padding: const EdgeInsets.all(Layout.spacing),
+            child: _buildToggleButton(context),
+          ),
+          Divider(color: scheme.outlineVariant, height: 1),
           Expanded(
             child: ListView.separated(
+              padding: const EdgeInsets.all(Layout.spacing),
               itemCount: widget.items.length,
-              separatorBuilder: (_, _) =>
-                  const SizedBox(height: Layout.spacing * 2),
+              separatorBuilder: (_, _) => const SizedBox(height: 6),
               itemBuilder: (context, index) => _buildItem(widget.items[index]),
             ),
           ),
-
-          // Bottom user + logout
-          const Divider(color: Colors.white24),
-          _buildUserSection(),
+          Divider(color: scheme.outlineVariant, height: 1),
+          Padding(
+            padding: const EdgeInsets.all(Layout.spacing),
+            child: _buildUserSection(context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildToggleButton() {
+  Widget _buildToggleButton(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Row(
-      // mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SizedBox(
-          width: collapsedWidth,
-          height: collapsedWidth,
-          child: AnimatedRotation(
-            turns: isExpanded ? 0.5 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: IconButton(
-              icon: CircleAvatar(
-                backgroundColor: isExpanded ? Colors.blue : Colors.white54,
-                child: Icon(Icons.gamepad),
-              ),
-              onPressed: () {
-                setState(() {
-                  isExpanded = !isExpanded;
-                });
-              },
+          width: collapsedContentWidth,
+          height: collapsedContentWidth,
+          child: IconButton.filledTonal(
+            style: IconButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size(collapsedContentWidth, collapsedContentWidth),
+            ),
+            onPressed: () {
+              setState(() {
+                isExpanded = !isExpanded;
+              });
+            },
+            icon: AnimatedRotation(
+              turns: isExpanded ? 0.5 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: const Icon(Icons.space_dashboard_rounded),
             ),
           ),
         ),
         if (isExpanded)
           Flexible(
-            child: Column(
-              // mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "EXAM CLIENT",
-                  style: TextStyle(
-                    color: sky.shade(600),
-                    fontSize: Layout.text_xl,
-                    fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: const EdgeInsets.only(left: Layout.spacing),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TMATH',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.6,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.clip,
-                  softWrap: false,
-                ),
-                Text(
-                  "v1.0.0",
-                  style: TextStyle(
-                    color: slate.shade(400),
-                    fontSize: Layout.text_xs,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    'competitive workspace',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.clip,
-                  softWrap: false,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
       ],
@@ -166,84 +171,113 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     IconData icon,
     Color color,
     String label,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        height: 40,
-        child: Row(
-          children: [
-            SizedBox(
-              width: collapsedWidth,
-              child: Center(child: Icon(icon, color: color)),
-            ),
-
-            if (isExpanded)
-              Flexible(
-                child: Text(
-                  label,
-                  style: TextStyle(color: color),
-                  overflow: TextOverflow.clip,
-                  softWrap: false,
-                ),
-              ),
-          ],
-        ),
+    VoidCallback onTap, {
+    Color? backgroundColor,
+    bool active = false,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      decoration: BoxDecoration(
+        color: backgroundColor ?? Colors.transparent,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
       ),
-    );
-  }
-
-  Widget _buildItem(SidebarItem item) {
-    final isActive =
-        widget.activeRoute == item.route ||
-        widget.activeRoute.startsWith('${item.route}/');
-
-    return _actionButton(
-      item.icon,
-      isActive ? Colors.blue : Colors.white54,
-      item.title,
-      () => context.go(item.route),
-    );
-  }
-
-  Widget _buildUserSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12),
-      child: Column(
-        children: [
-          SizedBox(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+          child: SizedBox(
             height: 40,
             child: Row(
               children: [
                 SizedBox(
-                  width: collapsedWidth,
-                  child: CircleAvatar(
-                    // radius: Layout.border_radius_2xl,
-                    child: Icon(Icons.person),
-                  ),
+                  width: collapsedContentWidth,
+                  child: Center(child: Icon(icon, color: color, size: 20)),
                 ),
                 if (isExpanded)
                   Flexible(
                     child: Text(
-                      username.isNotEmpty ? username : "User",
-                      style: const TextStyle(color: Colors.white),
-                      overflow: TextOverflow.clip,
+                      label,
+                      style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.w700,
+                        fontSize: Layout.textSm,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                       softWrap: false,
                     ),
                   ),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          _actionButton(
-            Icons.logout,
-            Colors.redAccent,
-            "Logout",
-            _handleLogout,
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildItem(SidebarItem item) {
+    final scheme = Theme.of(context).colorScheme;
+    final isActive =
+        widget.activeRoute == item.route ||
+        widget.activeRoute.startsWith('${item.route}/');
+
+    return _actionButton(
+      item.icon,
+      isActive ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
+      item.title,
+      () => context.go(item.route),
+      backgroundColor: isActive ? scheme.primaryContainer : null,
+      active: isActive,
+    );
+  }
+
+  Widget _buildUserSection(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Column(
+      children: [
+        Container(
+          height: 48,
+          // padding: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: collapsedContentWidth,
+                child: CircleAvatar(
+                  backgroundColor: scheme.secondaryContainer,
+                  foregroundColor: scheme.onSecondaryContainer,
+                  child: const Icon(Icons.person_outline),
+                ),
+              ),
+              if (isExpanded)
+                Expanded(
+                  child: Text(
+                    username.isNotEmpty ? username : 'User',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        _actionButton(
+          Icons.logout_rounded,
+          scheme.error,
+          'Logout',
+          _handleLogout,
+          backgroundColor: scheme.errorContainer.withValues(alpha: 0.35),
+        ),
+      ],
     );
   }
 }

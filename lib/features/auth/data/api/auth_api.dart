@@ -8,21 +8,21 @@ class AuthApi {
   AuthApi(this.dio);
 
   Future<User> me() async {
-    final res = await dio.get('/api/auth/me');
+    final res = await dio.get('me');
     return User.fromJson(res.data);
   }
 
   Future<Token> refresh(String refreshToken) async {
     final res = await dio.post(
-      '/api/auth/refresh',
-      data: {'refresh': refreshToken},
+      'auth/refresh',
+      data: {'refresh_token': refreshToken},
     );
     return Token.fromJson(res.data);
   }
 
   Future<Token> login(String username, String password) async {
     final res = await dio.post(
-      '/api/auth/login',
+      'auth/login',
       data: {'username': username, 'password': password},
     );
 
@@ -30,6 +30,6 @@ class AuthApi {
   }
 
   Future<void> logout(String refreshToken) async {
-    await dio.post('/api/auth/logout', data: {'refresh_token': refreshToken});
+    await dio.post('auth/logout', data: {'refresh_token': refreshToken});
   }
 }

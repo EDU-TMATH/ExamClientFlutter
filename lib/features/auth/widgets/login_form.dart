@@ -36,7 +36,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
       if (!mounted) return;
 
-      context.go('/contests');
+      context.go('/');
     } on AppException catch (e) {
       if (!mounted) return;
       AppToast.error(context, e.message);
@@ -61,7 +61,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               Text(
                 "EXAM CLIENT",
                 style: TextStyle(
-                  fontSize: Layout.text_sm,
+                  fontSize: Layout.textSm,
                   fontWeight: FontWeight.w500,
                   color: sky.shade(600),
                 ),
@@ -79,7 +79,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               Text(
                 "Nhập tài khoản để bắt đầu làm bài thi.",
                 style: TextStyle(
-                  fontSize: Layout.text_sm,
+                  fontSize: Layout.textSm,
                   color: slate.shade(500),
                 ),
               ),

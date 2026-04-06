@@ -3,8 +3,10 @@ import 'package:exam_client_flutter/features/auth/services/token_service.dart';
 
 class AuthInterceptor extends Interceptor {
   final TokenService tokenService;
+  final Dio retryDio;
 
-  AuthInterceptor(this.tokenService);
+  AuthInterceptor(this.tokenService, {Dio? retryDio})
+    : retryDio = retryDio ?? Dio();
 
   @override
   void onRequest(options, handler) async {
@@ -19,18 +21,34 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, handler) async {
-    if (err.response?.statusCode == 401) {
-      final newToken = await tokenService.refresh();
+    final statusCode = err.response?.statusCode;
+    final request = err.requestOptions;
+    final isAuthEndpoint =
+        request.path.contains('auth/login/') ||
+        request.path.contains('auth/refresh/');
+    final alreadyRetried = request.extra['retried_401'] == true;
 
-      final request = err.requestOptions;
-
-      request.headers['Authorization'] = 'Bearer $newToken';
-
-      final response = await Dio().fetch(request);
-
-      return handler.resolve(response);
+    if (statusCode != 401 || isAuthEndpoint || alreadyRetried) {
+      handler.next(err);
+      return;
     }
 
-    handler.next(err);
+    try {
+      final newToken = await tokenService.refresh();
+      if (newToken == null) {
+        await tokenService.clear();
+        handler.next(err);
+        return;
+      }
+
+      request.extra['retried_401'] = true;
+      request.headers['Authorization'] = 'Bearer $newToken';
+
+      final response = await retryDio.fetch(request);
+      return handler.resolve(response);
+    } catch (_) {
+      await tokenService.clear();
+      handler.next(err);
+    }
   }
 }

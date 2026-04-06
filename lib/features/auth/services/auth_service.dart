@@ -11,7 +11,7 @@ class AuthService {
     try {
       LoginRequest request = LoginRequest(username: u, password: p);
 
-      final res = await dio.post('/api/auth/login/', data: request.toJson());
+      final res = await dio.post('auth/login/', data: request.toJson());
 
       return Token.fromJson(res.data);
     } on DioException catch (e) {
@@ -31,7 +31,7 @@ class AuthService {
 
   Future getMe() async {
     try {
-      final res = await dio.get('/api/auth/me/');
+      final res = await dio.get('me');
       return res.data;
     } on DioException catch (e) {
       if (e.response != null) {

@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:exam_client_flutter/constants/app_color.dart';
-import 'package:exam_client_flutter/core/di.dart';
+import 'package:exam_client_flutter/core/providers/app_providers.dart';
 import 'package:exam_client_flutter/features/contest/models/contest.dart';
 import 'package:exam_client_flutter/features/contest/widgets/contest_card.dart';
 import 'package:exam_client_flutter/widgets/app_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class ContestList extends StatefulWidget {
+class ContestList extends ConsumerStatefulWidget {
   const ContestList({super.key});
 
   @override
-  State<ContestList> createState() => _ContestListState();
+  ConsumerState<ContestList> createState() => _ContestListState();
 }
 
-class _ContestListState extends State<ContestList> {
+class _ContestListState extends ConsumerState<ContestList> {
   List<ContestListItem> contests = [];
   bool loading = true;
   String error = "";
@@ -41,6 +42,7 @@ class _ContestListState extends State<ContestList> {
 
   Future<void> fetchContests() async {
     try {
+      final contestService = ref.read(contestServiceProvider);
       final data = await contestService.fetchContests();
       setState(() {
         contests = data;
@@ -101,7 +103,7 @@ class _ContestListState extends State<ContestList> {
       itemBuilder: (context, index) => ContestCard(
         contest: contests[index],
         onJoin: (key) {
-          context.go('/exam/$key');
+          context.go('/contest/$key');
         },
       ),
     );
