@@ -34,7 +34,12 @@ class AppLayout extends StatelessWidget {
             AppSidebar(activeRoute: activeRoute),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(Layout.spacing * 3),
+                padding: const EdgeInsets.fromLTRB(
+                  Layout.spacing,
+                  Layout.spacing * 2,
+                  Layout.spacing * 2,
+                  Layout.spacing * 2,
+                ),
                 child: Column(
                   children: [
                     _AppHeader(
@@ -50,10 +55,15 @@ class AppLayout extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: scheme.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(
-                            Layout.borderRadiusXl,
-                          ),
+                          borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
                           border: Border.all(color: scheme.outlineVariant),
+                          boxShadow: [
+                            BoxShadow(
+                              color: scheme.shadow.withValues(alpha: 0.04),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: body,
@@ -94,12 +104,12 @@ class _AppHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
-        horizontal: Layout.spacing * 4,
-        vertical: Layout.spacing * 3,
+        horizontal: Layout.spacing * 3,
+        vertical: Layout.spacing * 2.5,
       ),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
@@ -122,15 +132,17 @@ class _AppHeader extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.chevron_left,
-                            size: 18,
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 14,
                             color: scheme.primary,
                           ),
+                          const SizedBox(width: 6),
                           Text(
                             breadcrumbLabel!,
                             style: textTheme.labelLarge?.copyWith(
                               color: scheme.primary,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.35,
                             ),
                           ),
                         ],
@@ -143,11 +155,11 @@ class _AppHeader extends StatelessWidget {
                   title,
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
-                    letterSpacing: -0.2,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: Layout.spacing * 1.5),
+                  const SizedBox(height: Layout.spacing),
                   Text(
                     subtitle!,
                     style: textTheme.bodySmall?.copyWith(

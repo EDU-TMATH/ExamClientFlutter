@@ -11,7 +11,7 @@ class AuthInterceptor extends Interceptor {
   @override
   void onRequest(options, handler) async {
     final token = await tokenService.getValidAccessToken();
-    options.headers['X-Exam-App'] = 'exam-client';
+    // options.headers['X-Exam-App'] = 'exam-client';
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }

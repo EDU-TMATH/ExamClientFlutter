@@ -43,8 +43,8 @@ class AppSidebar extends ConsumerStatefulWidget {
 class _AppSidebarState extends ConsumerState<AppSidebar> {
   bool isExpanded = false;
   String username = "";
-  double expandedWidth = 220;
-  double collapsedWidth = Layout.rem * 4.25;
+  double expandedWidth = 244;
+  double collapsedWidth = Layout.rem * 4.5;
   double get sidebarWidth => isExpanded ? expandedWidth : collapsedWidth;
   double get collapsedContentWidth => collapsedWidth - (Layout.spacing * 2) - 2;
 
@@ -76,12 +76,17 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     final scheme = Theme.of(context).colorScheme;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 160),
       width: sidebarWidth,
-      margin: const EdgeInsets.all(Layout.spacing * 2),
+      margin: const EdgeInsets.fromLTRB(
+        Layout.spacing * 2,
+        Layout.spacing * 2,
+        Layout.spacing,
+        Layout.spacing * 2,
+      ),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
@@ -122,6 +127,11 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
             style: IconButton.styleFrom(
               padding: EdgeInsets.zero,
               minimumSize: Size(collapsedContentWidth, collapsedContentWidth),
+              backgroundColor: scheme.surfaceContainer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
+                side: BorderSide(color: scheme.outlineVariant),
+              ),
             ),
             onPressed: () {
               setState(() {
@@ -147,15 +157,15 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: scheme.primary,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 0.6,
+                      letterSpacing: 0.8,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'competitive workspace',
+                    'competition workspace',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: scheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -176,19 +186,22 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     bool active = false,
   }) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
+      duration: const Duration(milliseconds: 120),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.transparent,
-        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+        borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
+        border: Border.all(
+          color: active ? color.withValues(alpha: 0.28) : Colors.transparent,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+        borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+          borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
           child: SizedBox(
-            height: 40,
+            height: 42,
             child: Row(
               children: [
                 SizedBox(
@@ -199,10 +212,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                   Flexible(
                     child: Text(
                       label,
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: color,
-                        fontWeight: FontWeight.w700,
-                        fontSize: Layout.textSm,
+                        fontWeight: FontWeight.w800,
                       ),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -227,7 +239,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
       isActive ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
       item.title,
       () => context.go(item.route),
-      backgroundColor: isActive ? scheme.primaryContainer : null,
+      backgroundColor: isActive
+          ? scheme.primaryContainer
+          : scheme.surfaceContainerLowest,
       active: isActive,
     );
   }
@@ -240,27 +254,27 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
       children: [
         Container(
           height: 48,
-          // padding: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+            color: scheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
+            border: Border.all(color: scheme.outlineVariant),
           ),
           child: Row(
             children: [
               SizedBox(
                 width: collapsedContentWidth,
                 child: CircleAvatar(
-                  backgroundColor: scheme.secondaryContainer,
-                  foregroundColor: scheme.onSecondaryContainer,
+                  backgroundColor: scheme.primaryContainer,
+                  foregroundColor: scheme.onPrimaryContainer,
                   child: const Icon(Icons.person_outline),
                 ),
               ),
               if (isExpanded)
                 Expanded(
                   child: Text(
-                    username.isNotEmpty ? username : 'User',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    username.isNotEmpty ? username : 'Người dùng',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
                     overflow: TextOverflow.ellipsis,
                     softWrap: false,
@@ -273,7 +287,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
         _actionButton(
           Icons.logout_rounded,
           scheme.error,
-          'Logout',
+          'Đăng xuất',
           _handleLogout,
           backgroundColor: scheme.errorContainer.withValues(alpha: 0.35),
         ),

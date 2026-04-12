@@ -16,14 +16,17 @@ class AppTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: Layout.spacing * 3,
         vertical: Layout.spacing * 2,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: slate.shade(200))),
+        color: scheme.surfaceContainerLowest,
+        border: Border(bottom: BorderSide(color: scheme.outlineVariant)),
       ),
       child: Row(
         children: [
@@ -31,16 +34,17 @@ class AppTopBar extends StatelessWidget {
             IconButton(
               tooltip: 'Quay lại',
               onPressed: onBack,
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
             ),
             const SizedBox(width: Layout.spacing),
           ],
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: Layout.textLg,
-                fontWeight: FontWeight.w700,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: slate.shade(900),
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.2,
               ),
             ),
           ),

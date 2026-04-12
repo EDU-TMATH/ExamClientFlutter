@@ -22,19 +22,16 @@ class AppButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
+      child: FilledButton(
         onPressed: isDisabled ? null : onPressed,
-
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isDisabled ? sky.shade(300) : sky.shade(600),
-
-          padding: const EdgeInsets.symmetric(vertical: Layout.spacing * 4),
-
+        style: FilledButton.styleFrom(
+          backgroundColor: isDisabled ? slate.shade(300) : sky.shade(700),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: Layout.spacing * 3.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
+            borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
           ),
         ),
-
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -53,7 +50,8 @@ class AppButton extends StatelessWidget {
             Text(
               isLoading ? loadingText : text,
               style: const TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.3,
                 color: Colors.white,
               ),
             ),

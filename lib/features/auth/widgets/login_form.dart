@@ -59,11 +59,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           Column(
             children: [
               Text(
-                "EXAM CLIENT",
+                "TMATH",
                 style: TextStyle(
                   fontSize: Layout.textSm,
-                  fontWeight: FontWeight.w500,
-                  color: sky.shade(600),
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                  color: sky.shade(700),
                 ),
               ),
               const SizedBox(height: Layout.spacing * 2),
@@ -71,13 +72,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 "Đăng nhập",
                 style: TextStyle(
                   fontSize: Layout.text_3xl,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   color: slate.shade(900),
                 ),
               ),
               const SizedBox(height: Layout.spacing * 1),
               Text(
-                "Nhập tài khoản để bắt đầu làm bài thi.",
+                "Truy cập workspace thi đấu với giao diện gọn, nhanh và tập trung.",
                 style: TextStyle(
                   fontSize: Layout.textSm,
                   color: slate.shade(500),
