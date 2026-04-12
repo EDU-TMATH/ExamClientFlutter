@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:exam_client_flutter/constants/app_color.dart';
+import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/providers/app_providers.dart';
 import 'package:exam_client_flutter/features/contest/models/contest.dart';
 import 'package:exam_client_flutter/features/contest/widgets/contest_card.dart';
@@ -21,23 +20,10 @@ class _ContestListState extends ConsumerState<ContestList> {
   bool loading = true;
   String error = "";
 
-  Timer? timer;
-
   @override
   void initState() {
     super.initState();
     fetchContests();
-
-    // update time mỗi giây (giống Vue nowMs)
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   Future<void> fetchContests() async {
@@ -72,24 +58,20 @@ class _ContestListState extends ConsumerState<ContestList> {
   Widget _buildBody() {
     if (loading) {
       return const Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            SizedBox(width: 10),
-            Text("Đang tải danh sách cuộc thi..."),
-          ],
+        child: SizedBox(
+          width: 26,
+          height: 26,
+          child: CircularProgressIndicator(strokeWidth: 2.2),
         ),
       );
     }
 
     if (error.isNotEmpty) {
       return Center(
-        child: Text(error, style: TextStyle(color: red.shade(600))),
+        child: Padding(
+          padding: const EdgeInsets.all(Layout.spacing * 4),
+          child: Text(error, style: TextStyle(color: red.shade(600))),
+        ),
       );
     }
 
@@ -97,13 +79,41 @@ class _ContestListState extends ConsumerState<ContestList> {
       return const Center(child: Text("Chưa có cuộc thi nào."));
     }
 
-    return ListView.separated(
-      itemCount: contests.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => ContestCard(
-        contest: contests[index],
-        onJoin: (key) {
-          context.go('/contest/$key');
+    return RefreshIndicator(
+      onRefresh: fetchContests,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final crossAxisCount = width >= 1200
+              ? 3
+              : width >= 768
+              ? 2
+              : 1;
+
+          final mainAxisExtent = crossAxisCount == 1 ? 220.0 : 260.0;
+
+          return GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(
+              Layout.spacing * 3,
+              Layout.spacing * 3,
+              Layout.spacing * 3,
+              Layout.spacing * 4,
+            ),
+            itemCount: contests.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: Layout.spacing * 2,
+              mainAxisSpacing: Layout.spacing * 2,
+              mainAxisExtent: mainAxisExtent,
+            ),
+            itemBuilder: (context, index) => ContestCard(
+              contest: contests[index],
+              onJoin: (key) {
+                context.go('/contest/$key');
+              },
+            ),
+          );
         },
       ),
     );

@@ -43,10 +43,10 @@ class AppSidebar extends ConsumerStatefulWidget {
 class _AppSidebarState extends ConsumerState<AppSidebar> {
   bool isExpanded = false;
   String username = "";
-  double expandedWidth = 244;
+  double expandedWidth = 252;
   double collapsedWidth = Layout.rem * 4.5;
   double get sidebarWidth => isExpanded ? expandedWidth : collapsedWidth;
-  double get collapsedContentWidth => collapsedWidth - (Layout.spacing * 2) - 2;
+  double get collapsedContentWidth => collapsedWidth - (Layout.spacing * 3);
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     final scheme = Theme.of(context).colorScheme;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
+      duration: const Duration(milliseconds: 190),
       width: sidebarWidth,
       margin: const EdgeInsets.fromLTRB(
         Layout.spacing * 2,
@@ -85,26 +85,58 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
         Layout.spacing * 2,
       ),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLowest,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            scheme.surfaceContainerLowest.withValues(alpha: 0.9),
+            scheme.surfaceContainerLow.withValues(alpha: 0.8),
+          ],
+        ),
         borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
-        border: Border.all(color: scheme.outlineVariant),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.85),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(Layout.spacing),
+            padding: const EdgeInsets.fromLTRB(
+              Layout.spacing,
+              Layout.spacing * 1.5,
+              Layout.spacing,
+              Layout.spacing * 1.5,
+            ),
             child: _buildToggleButton(context),
           ),
-          Divider(color: scheme.outlineVariant, height: 1),
+          Divider(
+            color: scheme.outlineVariant.withValues(alpha: 0.75),
+            height: 1,
+          ),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.all(Layout.spacing),
+              padding: const EdgeInsets.fromLTRB(
+                Layout.spacing,
+                Layout.spacing * 1.5,
+                Layout.spacing,
+                Layout.spacing,
+              ),
               itemCount: widget.items.length,
               separatorBuilder: (_, _) => const SizedBox(height: 6),
               itemBuilder: (context, index) => _buildItem(widget.items[index]),
             ),
           ),
-          Divider(color: scheme.outlineVariant, height: 1),
+          Divider(
+            color: scheme.outlineVariant.withValues(alpha: 0.75),
+            height: 1,
+          ),
           Padding(
             padding: const EdgeInsets.all(Layout.spacing),
             child: _buildUserSection(context),
@@ -118,62 +150,85 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Row(
-      children: [
-        SizedBox(
-          width: collapsedContentWidth,
-          height: collapsedContentWidth,
-          child: IconButton.filledTonal(
-            style: IconButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size(collapsedContentWidth, collapsedContentWidth),
-              backgroundColor: scheme.surfaceContainer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
-                side: BorderSide(color: scheme.outlineVariant),
+    return SizedBox(
+      height: collapsedContentWidth + (Layout.spacing * 2),
+      child: Row(
+        children: [
+          SizedBox(
+            width: collapsedContentWidth,
+            height: collapsedContentWidth,
+            child: IconButton(
+              style: IconButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size(collapsedContentWidth, collapsedContentWidth),
+                backgroundColor: scheme.primaryContainer.withValues(alpha: 0.7),
+                foregroundColor: scheme.onPrimaryContainer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
+                  side: BorderSide(
+                    color: scheme.primary.withValues(alpha: 0.22),
+                  ),
+                ),
               ),
-            ),
-            onPressed: () {
-              setState(() {
-                isExpanded = !isExpanded;
-              });
-            },
-            icon: AnimatedRotation(
-              turns: isExpanded ? 0.5 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.space_dashboard_rounded),
-            ),
-          ),
-        ),
-        if (isExpanded)
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(left: Layout.spacing),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'TMATH',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.8,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    'competition workspace',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              onPressed: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: ScaleTransition(scale: animation, child: child),
+                  );
+                },
+                child: Icon(
+                  isExpanded
+                      ? Icons.keyboard_double_arrow_left_rounded
+                      : Icons.keyboard_double_arrow_right_rounded,
+                  key: ValueKey(isExpanded),
+                ),
               ),
             ),
           ),
-      ],
+          if (isExpanded)
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: Layout.spacing * 1.25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TMATH',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.7,
+                        height: 1.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'workspace thi dau',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w700,
+                        height: 1.0,
+                        letterSpacing: 0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -186,12 +241,14 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
     bool active = false,
   }) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 120),
+      duration: const Duration(milliseconds: 140),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.transparent,
         borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
         border: Border.all(
-          color: active ? color.withValues(alpha: 0.28) : Colors.transparent,
+          color: active
+              ? color.withValues(alpha: 0.28)
+              : color.withValues(alpha: 0.08),
         ),
       ),
       child: Material(
@@ -201,12 +258,14 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
           onTap: onTap,
           borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
           child: SizedBox(
-            height: 42,
+            height: 44,
             child: Row(
               children: [
                 SizedBox(
                   width: collapsedContentWidth,
-                  child: Center(child: Icon(icon, color: color, size: 20)),
+                  child: Center(
+                    child: Icon(icon, color: color, size: active ? 21 : 20),
+                  ),
                 ),
                 if (isExpanded)
                   Flexible(
@@ -240,8 +299,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
       item.title,
       () => context.go(item.route),
       backgroundColor: isActive
-          ? scheme.primaryContainer
-          : scheme.surfaceContainerLowest,
+          ? scheme.primaryContainer.withValues(alpha: 0.78)
+          : scheme.surfaceContainerLowest.withValues(alpha: 0.52),
       active: isActive,
     );
   }
@@ -255,7 +314,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
         Container(
           height: 48,
           decoration: BoxDecoration(
-            color: scheme.surfaceContainer,
+            color: scheme.surfaceContainer.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
             border: Border.all(color: scheme.outlineVariant),
           ),
@@ -289,7 +348,7 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
           scheme.error,
           'Đăng xuất',
           _handleLogout,
-          backgroundColor: scheme.errorContainer.withValues(alpha: 0.35),
+          backgroundColor: scheme.errorContainer.withValues(alpha: 0.48),
         ),
       ],
     );

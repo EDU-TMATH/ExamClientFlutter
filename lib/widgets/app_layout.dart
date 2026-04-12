@@ -27,7 +27,7 @@ class AppLayout extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: scheme.surface,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Row(
           children: [
@@ -54,8 +54,12 @@ class AppLayout extends StatelessWidget {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: scheme.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+                          color: scheme.surfaceContainerLowest.withValues(
+                            alpha: 0.86,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            Layout.borderRadiusLg,
+                          ),
                           border: Border.all(color: scheme.outlineVariant),
                           boxShadow: [
                             BoxShadow(
@@ -108,7 +112,7 @@ class _AppHeader extends StatelessWidget {
         vertical: Layout.spacing * 2.5,
       ),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLowest,
+        color: scheme.surfaceContainerLowest.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
         border: Border.all(color: scheme.outlineVariant),
       ),

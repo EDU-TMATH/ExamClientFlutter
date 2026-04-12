@@ -20,6 +20,17 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: _buildLightTheme(),
       darkTheme: _buildDarkTheme(),
+      builder: (context, child) => Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          child!,
+        ],
+      ),
     );
   }
 
@@ -123,7 +134,7 @@ class MyApp extends StatelessWidget {
       textTheme: textTheme,
       pageTransitionsTheme: _pageTransitionsTheme,
       visualDensity: VisualDensity.compact,
-      scaffoldBackgroundColor: scheme.surface,
+      scaffoldBackgroundColor: Colors.transparent,
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: scheme.primary,
         selectionColor: scheme.primary.withValues(alpha: 0.18),
