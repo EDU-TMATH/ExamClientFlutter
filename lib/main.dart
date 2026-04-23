@@ -1,6 +1,9 @@
 import 'package:exam_client_flutter/constants/layout.dart';
+import 'package:exam_client_flutter/core/providers/app_providers.dart';
+import 'package:exam_client_flutter/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'core/router/app_router.dart';
 
@@ -8,26 +11,23 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp.router(
       title: 'TMath',
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       theme: _buildLightTheme(),
       darkTheme: _buildDarkTheme(),
       builder: (context, child) => Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+          Positioned.fill(child: Image.asset(AppImage.bg, fit: BoxFit.cover)),
           child!,
         ],
       ),
@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: 'BeVietnamPro',
+      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
       colorScheme: scheme,
     );
     return _refineTheme(base);
@@ -120,7 +120,7 @@ class MyApp extends StatelessWidget {
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      fontFamily: 'BeVietnamPro',
+      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
       colorScheme: scheme,
     );
     return _refineTheme(base);
@@ -276,47 +276,49 @@ class MyApp extends StatelessWidget {
   }
 
   TextTheme _buildTextTheme(TextTheme base, ColorScheme scheme) {
-    return base.copyWith(
-      displaySmall: base.displaySmall?.copyWith(
+    final typedBase = GoogleFonts.notoSansTextTheme(base);
+
+    return typedBase.copyWith(
+      displaySmall: typedBase.displaySmall?.copyWith(
         fontWeight: FontWeight.w800,
         letterSpacing: -1.0,
         height: 1.05,
       ),
-      headlineSmall: base.headlineSmall?.copyWith(
+      headlineSmall: typedBase.headlineSmall?.copyWith(
         fontWeight: FontWeight.w800,
         letterSpacing: -0.6,
         height: 1.1,
       ),
-      titleLarge: base.titleLarge?.copyWith(
+      titleLarge: typedBase.titleLarge?.copyWith(
         fontWeight: FontWeight.w800,
         letterSpacing: -0.2,
         height: 1.15,
       ),
-      titleMedium: base.titleMedium?.copyWith(
+      titleMedium: typedBase.titleMedium?.copyWith(
         fontWeight: FontWeight.w700,
         height: 1.15,
       ),
-      bodyLarge: base.bodyLarge?.copyWith(
+      bodyLarge: typedBase.bodyLarge?.copyWith(
         color: scheme.onSurface,
         height: 1.35,
       ),
-      bodyMedium: base.bodyMedium?.copyWith(
+      bodyMedium: typedBase.bodyMedium?.copyWith(
         color: scheme.onSurface,
         height: 1.35,
       ),
-      bodySmall: base.bodySmall?.copyWith(
+      bodySmall: typedBase.bodySmall?.copyWith(
         color: scheme.onSurfaceVariant,
         height: 1.35,
       ),
-      labelLarge: base.labelLarge?.copyWith(
+      labelLarge: typedBase.labelLarge?.copyWith(
         fontWeight: FontWeight.w800,
         letterSpacing: 0.35,
       ),
-      labelMedium: base.labelMedium?.copyWith(
+      labelMedium: typedBase.labelMedium?.copyWith(
         fontWeight: FontWeight.w700,
         letterSpacing: 0.3,
       ),
-      labelSmall: base.labelSmall?.copyWith(
+      labelSmall: typedBase.labelSmall?.copyWith(
         color: scheme.onSurfaceVariant,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.5,
@@ -363,9 +365,8 @@ class MyApp extends StatelessWidget {
           side: BorderSide(color: borderColor),
         ),
       ),
-      textStyle: const WidgetStatePropertyAll(
+      textStyle: WidgetStatePropertyAll(
         TextStyle(
-          fontFamily: 'BeVietnamPro',
           fontSize: Layout.textSm,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.3,

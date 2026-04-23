@@ -22,7 +22,7 @@ class HomeDashboardView extends StatelessWidget {
             children: [
               HomeHeroCard(data: data),
               const SizedBox(height: Layout.spacing * 3),
-              HomeMetricGrid(data: data, maxWidth: constraints.maxWidth),
+              HomeMetricGrid(data: data),
               const SizedBox(height: Layout.spacing * 3),
               if (isWide)
                 Row(
@@ -251,60 +251,65 @@ class HomeHeroCard extends StatelessWidget {
 
 class HomeMetricGrid extends StatelessWidget {
   final HomeDashboardData data;
-  final double maxWidth;
 
-  const HomeMetricGrid({super.key, required this.data, required this.maxWidth});
+  const HomeMetricGrid({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
-    final columns = maxWidth >= 1180 ? 4 : (maxWidth >= 760 ? 2 : 1);
-    final spacing = Layout.spacing * 2;
-    final cardWidth = (maxWidth - spacing * (columns - 1)) / columns;
     final user = data.user;
 
-    return Wrap(
-      spacing: spacing,
-      runSpacing: spacing,
-      children: [
-        SizedBox(
-          width: cardWidth,
-          child: _MetricCard(
-            icon: Icons.stars_rounded,
-            label: 'Điểm tích lũy',
-            value: user.points.toStringAsFixed(1),
-            caption: 'Từ hồ sơ hiện tại',
-          ),
-        ),
-        SizedBox(
-          width: cardWidth,
-          child: _MetricCard(
-            icon: Icons.trending_up_rounded,
-            label: 'Performance',
-            value: user.performancePoints.toStringAsFixed(1),
-            caption: 'Nhịp tăng trưởng gần đây',
-          ),
-        ),
-        SizedBox(
-          width: cardWidth,
-          child: _MetricCard(
-            icon: Icons.task_alt_rounded,
-            label: 'Bài đã giải',
-            value: '${user.problemCount}',
-            caption: 'Live from profile',
-          ),
-        ),
-        SizedBox(
-          width: cardWidth,
-          child: _MetricCard(
-            icon: Icons.workspace_premium_outlined,
-            label: 'Vai trò',
-            value: _roleLabel(user),
-            caption: user.currentContestKey == null
-                ? 'Chưa có contest active'
-                : 'Contest: ${user.currentContestKey}',
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+        final columns = maxWidth >= 1180 ? 4 : (maxWidth >= 760 ? 2 : 1);
+        final spacing = Layout.spacing * 2;
+        final cardWidth = (maxWidth - spacing * (columns - 1)) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            SizedBox(
+              width: cardWidth,
+              child: _MetricCard(
+                icon: Icons.stars_rounded,
+                label: 'Điểm tích lũy',
+                value: user.points.toStringAsFixed(1),
+                caption: 'Từ hồ sơ hiện tại',
+              ),
+            ),
+            SizedBox(
+              width: cardWidth,
+              child: _MetricCard(
+                icon: Icons.trending_up_rounded,
+                label: 'Performance',
+                value: user.performancePoints.toStringAsFixed(1),
+                caption: 'Nhịp tăng trưởng gần đây',
+              ),
+            ),
+            SizedBox(
+              width: cardWidth,
+              child: _MetricCard(
+                icon: Icons.task_alt_rounded,
+                label: 'Bài đã giải',
+                value: '${user.problemCount}',
+                caption: 'Live from profile',
+              ),
+            ),
+            SizedBox(
+              width: cardWidth,
+              child: _MetricCard(
+                icon: Icons.workspace_premium_outlined,
+                label: 'Vai trò',
+                value: _roleLabel(user),
+                caption: user.currentContestKey == null
+                    ? 'Chưa có contest active'
+                    : 'Contest: ${user.currentContestKey}',
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

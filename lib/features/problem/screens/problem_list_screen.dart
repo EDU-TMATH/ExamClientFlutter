@@ -227,24 +227,31 @@ class _ProblemListScreenState extends ConsumerState<ProblemListScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: Layout.spacing * 1.5,
-                      vertical: Layout.spacing,
-                    ),
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(
-                        Layout.borderRadiusMd,
+                  SizedBox(
+                    width: 112,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Layout.spacing * 1.5,
+                        vertical: Layout.spacing,
                       ),
-                      border: Border.all(color: scheme.outlineVariant),
-                    ),
-                    child: Text(
-                      problem.code,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.4,
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(
+                          Layout.borderRadiusMd,
+                        ),
+                        border: Border.all(color: scheme.outlineVariant),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        problem.code,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.4,
+                        ),
                       ),
                     ),
                   ),

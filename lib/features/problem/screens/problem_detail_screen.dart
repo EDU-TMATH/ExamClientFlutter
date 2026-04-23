@@ -103,71 +103,84 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
 
     final latest = problem.latestSubmission;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(Layout.spacing * 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildOverviewCard(problem),
-          if (problem.types.isNotEmpty) ...[
-            const SizedBox(height: Layout.spacing * 3),
-            _buildSectionTitle('Phân loại'),
-            const SizedBox(height: Layout.spacing),
-            Wrap(
-              spacing: Layout.spacing,
-              runSpacing: Layout.spacing,
-              children: problem.types
-                  .map(
-                    (type) => _tagChip(
-                      label: type,
-                      background: violet.shade(50),
-                      foreground: violet.shade(700),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 1040;
+        final contentWidth = isWide ? 1040.0 : 840.0;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            Layout.spacing * 2,
+            Layout.spacing * 2,
+            Layout.spacing * 2,
+            Layout.spacing * 4,
+          ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: contentWidth),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildOverviewCard(problem),
+                  const SizedBox(height: Layout.spacing * 2.5),
+                  if (latest != null) ...[
+                    _buildLatestSubmissionCard(latest),
+                    const SizedBox(height: Layout.spacing * 2.5),
+                  ],
+                  if (problem.types.isNotEmpty)
+                    _buildSectionCard(
+                      icon: Icons.category_rounded,
+                      title: 'Phân loại',
+                      tint: violet.shade(700),
+                      child: Wrap(
+                        spacing: Layout.spacing,
+                        runSpacing: Layout.spacing,
+                        children: problem.types
+                            .map(
+                              (type) => _tagChip(
+                                label: type,
+                                background: violet.shade(50),
+                                foreground: violet.shade(700),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
-                  )
-                  .toList(),
-            ),
-          ],
-          if (problem.allowedLanguages.isNotEmpty) ...[
-            const SizedBox(height: Layout.spacing * 3),
-            _buildSectionTitle('Ngôn ngữ hỗ trợ'),
-            const SizedBox(height: Layout.spacing),
-            Wrap(
-              spacing: Layout.spacing,
-              runSpacing: Layout.spacing,
-              children: problem.allowedLanguages
-                  .map(
-                    (language) => _tagChip(
-                      label: language,
-                      background: sky.shade(50),
-                      foreground: sky.shade(700),
+                  if (problem.types.isNotEmpty)
+                    const SizedBox(height: Layout.spacing * 2),
+                  if (problem.allowedLanguages.isNotEmpty)
+                    _buildSectionCard(
+                      icon: Icons.code_rounded,
+                      title: 'Ngôn ngữ hỗ trợ',
+                      tint: sky.shade(700),
+                      child: Wrap(
+                        spacing: Layout.spacing,
+                        runSpacing: Layout.spacing,
+                        children: problem.allowedLanguages
+                            .map(
+                              (language) => _tagChip(
+                                label: language,
+                                background: sky.shade(50),
+                                foreground: sky.shade(700),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
-                  )
-                  .toList(),
-            ),
-          ],
-          if (latest != null) ...[
-            const SizedBox(height: Layout.spacing * 3),
-            _buildLatestSubmissionCard(latest),
-          ],
-          const SizedBox(height: Layout.spacing * 3),
-          _buildSectionTitle('Đề bài'),
-          const SizedBox(height: Layout.spacing),
-          SizedBox(
-            width: double.infinity,
-            child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
-                side: BorderSide(color: slate.shade(200)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(Layout.spacing * 2),
-                child: ProblemStatementView(content: problem.statement),
+                  if (problem.allowedLanguages.isNotEmpty)
+                    const SizedBox(height: Layout.spacing * 2),
+                  _buildSectionCard(
+                    icon: Icons.article_outlined,
+                    title: 'Đề bài',
+                    tint: slate.shade(700),
+                    child: ProblemStatementView(content: problem.statement),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -179,9 +192,23 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(Layout.spacing * 3),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            scheme.surfaceContainerLow,
+            scheme.surfaceContainerHighest.withValues(alpha: 0.72),
+          ],
+        ),
         borderRadius: BorderRadius.circular(Layout.borderRadiusXl),
-        border: Border.all(color: scheme.outlineVariant),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.9)),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,6 +238,7 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.2,
+              height: 1.18,
             ),
           ),
           if (problem.authors.isNotEmpty || problem.curators.isNotEmpty) ...[
@@ -228,39 +256,52 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
             ),
           ],
           const SizedBox(height: Layout.spacing * 3),
-          Wrap(
-            spacing: Layout.spacing * 2,
-            runSpacing: Layout.spacing * 2,
-            children: [
-              _metricCard(
-                icon: Icons.stars_rounded,
-                label: 'Điểm',
-                value: _formatPoints(problem.points),
-                tone: yellow.shade(50),
-                accent: yellow.shade(700),
-              ),
-              _metricCard(
-                icon: Icons.timer_outlined,
-                label: 'Time limit',
-                value: '${problem.timeLimit}s',
-                tone: sky.shade(50),
-                accent: sky.shade(700),
-              ),
-              _metricCard(
-                icon: Icons.memory_rounded,
-                label: 'Memory',
-                value: '${problem.memoryLimit} KB',
-                tone: violet.shade(50),
-                accent: violet.shade(700),
-              ),
-              _metricCard(
-                icon: Icons.code_rounded,
-                label: 'Ngôn ngữ',
-                value: '${problem.allowedLanguages.length}',
-                tone: green.shade(50),
-                accent: green.shade(700),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 760;
+              final itemWidth = compact
+                  ? (constraints.maxWidth - Layout.spacing) / 2
+                  : 168.0;
+
+              return Wrap(
+                spacing: Layout.spacing,
+                runSpacing: Layout.spacing,
+                children: [
+                  _metricCard(
+                    icon: Icons.stars_rounded,
+                    label: 'Điểm',
+                    value: _formatPoints(problem.points),
+                    tone: yellow.shade(50),
+                    accent: yellow.shade(700),
+                    width: itemWidth,
+                  ),
+                  _metricCard(
+                    icon: Icons.timer_outlined,
+                    label: 'Time limit',
+                    value: '${problem.timeLimit}s',
+                    tone: sky.shade(50),
+                    accent: sky.shade(700),
+                    width: itemWidth,
+                  ),
+                  _metricCard(
+                    icon: Icons.memory_rounded,
+                    label: 'Memory',
+                    value: '${problem.memoryLimit} KB',
+                    tone: violet.shade(50),
+                    accent: violet.shade(700),
+                    width: itemWidth,
+                  ),
+                  _metricCard(
+                    icon: Icons.code_rounded,
+                    label: 'Ngôn ngữ',
+                    value: '${problem.allowedLanguages.length}',
+                    tone: green.shade(50),
+                    accent: green.shade(700),
+                    width: itemWidth,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -269,21 +310,24 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
 
   Widget _buildLatestSubmissionCard(PracticeLatestSubmission latest) {
     final result = latest.result ?? latest.status ?? 'N/A';
-    final tone = result == 'AC' ? green : orange;
+    final tone = _resultTone(result);
+    final bg = tone.shade(50);
+    final edge = tone.shade(200);
+    final deep = tone.shade(700);
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(Layout.spacing * 2),
       decoration: BoxDecoration(
-        color: tone.shade(50),
+        color: bg,
         borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
-        border: Border.all(color: tone.shade(200)),
+        border: Border.all(color: edge),
       ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: tone.shade(100),
-            foregroundColor: tone.shade(700),
+            foregroundColor: deep,
             child: const Icon(Icons.history_rounded),
           ),
           const SizedBox(width: Layout.spacing * 2),
@@ -300,9 +344,7 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
                 ),
                 const SizedBox(height: Layout.spacing * 0.5),
                 Text(
-                  latest.date == null
-                      ? 'Chưa có thời gian chấm'
-                      : latest.date!.toLocal().toString(),
+                  _formatSubmissionDate(latest.date),
                   style: TextStyle(color: slate.shade(600)),
                 ),
               ],
@@ -313,12 +355,49 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionCard({
+    required IconData icon,
+    required String title,
+    required Widget child,
+    required Color tint,
+  }) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
-    return Text(
-      title,
-      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Layout.spacing * 2),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(Layout.borderRadiusLg),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.9)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(Layout.spacing),
+                decoration: BoxDecoration(
+                  color: tint.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(Layout.borderRadiusMd),
+                ),
+                child: Icon(icon, size: 18, color: tint),
+              ),
+              const SizedBox(width: Layout.spacing),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: Layout.spacing * 1.5),
+          child,
+        ],
+      ),
     );
   }
 
@@ -381,11 +460,12 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
     required String value,
     required Color tone,
     required Color accent,
+    required double width,
   }) {
     final theme = Theme.of(context);
 
     return Container(
-      width: 168,
+      width: width,
       padding: const EdgeInsets.all(Layout.spacing * 2),
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.14),
@@ -420,5 +500,26 @@ class _ProblemDetailScreenState extends ConsumerState<ProblemDetailScreen> {
     return points == points.roundToDouble()
         ? points.toStringAsFixed(0)
         : points.toStringAsFixed(1);
+  }
+
+  String _formatSubmissionDate(DateTime? date) {
+    if (date == null) return 'Chưa có thời gian chấm';
+    final local = date.toLocal();
+    final d = local.day.toString().padLeft(2, '0');
+    final m = local.month.toString().padLeft(2, '0');
+    final y = local.year;
+    final h = local.hour.toString().padLeft(2, '0');
+    final min = local.minute.toString().padLeft(2, '0');
+    return '$d/$m/$y $h:$min';
+  }
+
+  ColorPalette _resultTone(String result) {
+    final normalized = result.toUpperCase();
+    if (normalized == 'AC') return green;
+    if (normalized == 'WA' || normalized == 'TLE' || normalized == 'MLE') {
+      return orange;
+    }
+    if (normalized == 'CE' || normalized == 'RE') return red;
+    return sky;
   }
 }

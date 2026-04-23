@@ -90,7 +90,31 @@ class _ContestListState extends ConsumerState<ContestList> {
               ? 2
               : 1;
 
-          final mainAxisExtent = crossAxisCount == 1 ? 220.0 : 260.0;
+          if (crossAxisCount == 1) {
+            return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                Layout.spacing * 3,
+                Layout.spacing * 3,
+                Layout.spacing * 3,
+                Layout.spacing * 4,
+              ),
+              itemCount: contests.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: Layout.spacing * 2),
+              itemBuilder: (context, index) => ContestCard(
+                contest: contests[index],
+                onJoin: (key) {
+                  context.go('/contest/$key');
+                },
+              ),
+            );
+          }
+
+          final textScale = MediaQuery.textScalerOf(
+            context,
+          ).scale(1).clamp(1.0, 1.25);
+          final mainAxisExtent = (300.0 * textScale).toDouble();
 
           return GridView.builder(
             physics: const AlwaysScrollableScrollPhysics(),

@@ -1,3 +1,4 @@
+import 'package:exam_client_flutter/constants/app_color.dart';
 import 'package:exam_client_flutter/constants/layout.dart';
 import 'package:exam_client_flutter/core/providers/app_providers.dart';
 import 'package:flutter/material.dart';
@@ -308,6 +309,8 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
   Widget _buildUserSection(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final mode = ref.watch(themeModeProvider);
+    final isDark = mode == ThemeMode.dark;
 
     return Column(
       children: [
@@ -341,6 +344,18 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                 ),
             ],
           ),
+        ),
+        const SizedBox(height: 10),
+        _actionButton(
+          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          isDark ? yellow.shade(700) : violet.shade(700),
+          isDark ? 'Chế độ sáng' : 'Chế độ tối',
+          () {
+            ref.read(themeModeProvider.notifier).toggleLightDark();
+          },
+          backgroundColor: (isDark ? yellow.shade(100) : violet.shade(100))
+              .withValues(alpha: 0.42),
+          active: true,
         ),
         const SizedBox(height: 10),
         _actionButton(

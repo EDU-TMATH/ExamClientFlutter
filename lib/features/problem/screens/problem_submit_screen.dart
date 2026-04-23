@@ -5,7 +5,7 @@ import 'package:exam_client_flutter/features/problem/models/problem.dart';
 import 'package:exam_client_flutter/widgets/app_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/github.dart';
+import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -158,7 +158,8 @@ class _ProblemSubmitScreenState extends ConsumerState<ProblemSubmitScreen> {
   Mode _resolveLanguageMode(String? language) {
     final value = language?.trim().toLowerCase() ?? '';
 
-    if (value.contains('python')) return python;
+    if (value.contains('py')) return python;
+    // print('Resolving language mode for: "$value"');
     if (value.contains('typescript') || value == 'ts') return typescript;
     if (value.contains('javascript') || value == 'js') return javascript;
     if (value.contains('kotlin')) return kotlin;
@@ -269,14 +270,15 @@ class _ProblemSubmitScreenState extends ConsumerState<ProblemSubmitScreen> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
+                        color: const Color(0xff282c34),
+                        border: Border.all(color: const Color(0xff3e4451)),
                         borderRadius: BorderRadius.circular(
                           Layout.borderRadiusLg,
                         ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: CodeTheme(
-                        data: CodeThemeData(styles: githubTheme),
+                        data: CodeThemeData(styles: atomOneDarkTheme),
                         child: CodeField(
                           controller: sourceController,
                           expands: true,
@@ -284,11 +286,15 @@ class _ProblemSubmitScreenState extends ConsumerState<ProblemSubmitScreen> {
                           textStyle: GoogleFonts.jetBrainsMono(
                             fontSize: 14,
                             height: 1.5,
+                            color: const Color(0xffabb2bf),
                           ),
                           gutterStyle: GutterStyle(
                             width: 48,
-                            background: Colors.grey.shade100,
-                            textStyle: GoogleFonts.jetBrainsMono(fontSize: 12),
+                            background: const Color(0xff21252b),
+                            textStyle: GoogleFonts.jetBrainsMono(
+                              fontSize: 12,
+                              color: const Color(0xff636d83),
+                            ),
                           ),
                           padding: const EdgeInsets.all(Layout.spacing * 2),
                         ),

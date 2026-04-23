@@ -96,8 +96,13 @@ class _ContestCardState extends State<ContestCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final statusColor = _statusColor(context);
+    final visibilityColor =
+        widget.contest.isPrivate || widget.contest.isOrganizationPrivate
+        ? Colors.deepPurple.shade700
+        : Colors.blue.shade700;
     final actionButton = widget.showAction
         ? label == "start"
               ? _lockedButton(context)
@@ -109,8 +114,8 @@ class _ContestCardState extends State<ContestCard> {
                     backgroundColor: scheme.primary,
                     foregroundColor: scheme.onPrimary,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -127,43 +132,61 @@ class _ContestCardState extends State<ContestCard> {
         margin: EdgeInsets.zero,
         elevation: 0,
         clipBehavior: Clip.antiAlias,
-        color: scheme.surfaceContainerLowest.withValues(alpha: 0.86),
+        color: scheme.surfaceContainerLow,
+        // color: Colors.red,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(color: scheme.outlineVariant),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(20),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final isCompact = constraints.maxWidth < 420;
-
+              final isCompact = constraints.maxWidth < 520;
+              // print("MainAxisSize: ${MainAxisSize.min}");
               return Column(
+                // mainAxisSize: MainAxisSize.min,
+                // spacing: 16,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (isCompact) ...[
                     Text(
                       widget.contest.title,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 19,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: scheme.onSurface,
                         letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    _badge(
-                      text: _statusText(),
-                      color: statusColor.withValues(alpha: 0.12),
-                      textColor: statusColor,
-                      borderColor: statusColor.withValues(alpha: 0.24),
+                    // const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _badge(
+                          text: _statusText(),
+                          color: statusColor.withValues(alpha: 0.12),
+                          textColor: statusColor,
+                          borderColor: statusColor.withValues(alpha: 0.24),
+                        ),
+                        _badge(
+                          text: _visibilityText(),
+                          color: visibilityColor.withValues(alpha: 0.12),
+                          textColor: visibilityColor,
+                          borderColor: visibilityColor.withValues(alpha: 0.22),
+                        ),
+                        if (widget.contest.isRated)
+                          _badge(
+                            text: 'Rated',
+                            color: Colors.indigo.shade100,
+                            textColor: Colors.indigo.shade700,
+                            borderColor: Colors.indigo.shade200,
+                          ),
+                      ],
                     ),
-                    if (actionButton != null) ...[
-                      const SizedBox(height: 10),
-                      actionButton,
-                    ],
                   ] else
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,58 +199,153 @@ class _ContestCardState extends State<ContestCard> {
                                 widget.contest.title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 19,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: scheme.onSurface,
                                   letterSpacing: -0.2,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              _badge(
-                                text: _statusText(),
-                                color: statusColor.withValues(alpha: 0.12),
-                                textColor: statusColor,
-                                borderColor: statusColor.withValues(
-                                  alpha: 0.24,
-                                ),
+                              const SizedBox(height: 10),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  _badge(
+                                    text: _statusText(),
+                                    color: statusColor.withValues(alpha: 0.12),
+                                    textColor: statusColor,
+                                    borderColor: statusColor.withValues(
+                                      alpha: 0.24,
+                                    ),
+                                  ),
+                                  _badge(
+                                    text: _visibilityText(),
+                                    color: visibilityColor.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    textColor: visibilityColor,
+                                    borderColor: visibilityColor.withValues(
+                                      alpha: 0.22,
+                                    ),
+                                  ),
+                                  if (widget.contest.isRated)
+                                    _badge(
+                                      text: 'Rated',
+                                      color: Colors.indigo.shade100,
+                                      textColor: Colors.indigo.shade700,
+                                      borderColor: Colors.indigo.shade200,
+                                    ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        if (actionButton != null) actionButton,
                       ],
                     ),
-                  const SizedBox(height: 14),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          _metaChip(
-                            icon: Icons.key_rounded,
-                            text: widget.contest.key,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          _metaChip(
-                            icon: Icons.schedule_rounded,
-                            text:
-                                '${_formatDateTime(widget.contest.startTime)} - ${_formatDateTime(widget.contest.endTime)}',
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          if (widget.isActiveContest)
-                            _metaChip(
-                              icon: Icons.verified_rounded,
-                              text: 'Đang tham gia',
-                              color: Colors.blue.shade700,
-                              emphasized: true,
-                            ),
-                        ],
+                  // const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHighest.withValues(
+                        alpha: 0.4,
                       ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: scheme.outlineVariant),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.play_circle_outline_rounded,
+                              size: 16,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Bắt đầu: ${_formatDateTime(widget.contest.startTime)}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.flag_outlined,
+                              size: 16,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Kết thúc: ${_formatDateTime(widget.contest.endTime)}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      if (widget.isActiveContest)
+                        _metaChip(
+                          icon: Icons.verified_rounded,
+                          text: 'Đang tham gia',
+                          color: Colors.blue.shade700,
+                          emphasized: true,
+                        ),
+                      ...widget.contest.tags
+                          .take(2)
+                          .map(
+                            (tag) => _metaChip(
+                              icon: Icons.sell_outlined,
+                              text: tag,
+                              color: scheme.primary,
+                            ),
+                          ),
+                      if (widget.contest.tags.length > 2)
+                        _metaChip(
+                          icon: Icons.more_horiz_rounded,
+                          text: '+${widget.contest.tags.length - 2}',
+                          color: scheme.onSurfaceVariant,
+                        ),
+                    ],
+                  ),
+                  // const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: _metaChip(
+                            icon: Icons.timelapse_rounded,
+                            text: _durationText(),
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      if (actionButton != null) ...[
+                        const SizedBox(width: 12),
+                        actionButton,
+                      ],
+                    ],
                   ),
                 ],
               );
@@ -245,6 +363,23 @@ class _ContestCardState extends State<ContestCard> {
     final h = dt.hour.toString().padLeft(2, '0');
     final min = dt.minute.toString().padLeft(2, '0');
     return '$d/$m/$y $h:$min';
+  }
+
+  String _durationText() {
+    final duration = widget.contest.endTime.difference(
+      widget.contest.startTime,
+    );
+    final h = duration.inHours;
+    final m = duration.inMinutes % 60;
+    if (h == 0) return '${m}m';
+    if (m == 0) return '${h}h';
+    return '${h}h ${m}m';
+  }
+
+  String _visibilityText() {
+    if (widget.contest.isOrganizationPrivate) return 'Organization';
+    if (widget.contest.isPrivate) return 'Private';
+    return 'Public';
   }
 
   Widget _metaChip({
@@ -307,12 +442,13 @@ class _ContestCardState extends State<ContestCard> {
   }
 
   Widget _lockedButton(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.orange.shade50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.shade200),
+        border: Border.all(color: Colors.orange.shade300),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -329,6 +465,12 @@ class _ContestCardState extends State<ContestCard> {
               color: Colors.orange.shade700,
               fontWeight: FontWeight.w700,
             ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            Icons.schedule_rounded,
+            size: 14,
+            color: scheme.onSurfaceVariant,
           ),
         ],
       ),
